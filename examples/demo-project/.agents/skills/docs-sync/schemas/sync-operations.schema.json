@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RepoMind sync operations",
+  "type": "object",
+  "required": ["status", "operations"],
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "enum": ["no_changes", "update_required", "needs_review"]
+    },
+    "operations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/operation" }
+    }
+  },
+  "$defs": {
+    "codeRef": {
+      "type": "string",
+      "description": "Path and symbol, never a line number.",
+      "pattern": "^[^:]+#[A-Za-z_][A-Za-z0-9_.]*$"
+    },
+    "operation": {
+      "type": "object",
+      "required": ["action"],
+      "properties": {
+        "action": {
+          "enum": [
+            "replace_block",
+            "append_block",
+            "create_document",
+            "create_adr",
+            "append_task_result",
+            "mark_needs_review"
+          ]
+        },
+        "document_id": { "type": "string" },
+        "block_id": { "type": "string" },
+        "task": { "type": "string" },
+        "content": { "type": "string" },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/codeRef" }
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "reason": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": { "enum": ["replace_block", "append_block"] }
+            }
+          },
+          "then": {
+            "required": ["document_id", "block_id", "content", "evidence"]
+          }
+        },
+        {
+          "if": { "properties": { "action": { "const": "create_document" } } },
+          "then": { "required": ["document_id", "content", "evidence"] }
+        },
+        {
+          "if": { "properties": { "action": { "const": "create_adr" } } },
+          "then": { "required": ["content"] }
+        },
+        {
+          "if": {
+            "properties": { "action": { "const": "append_task_result" } }
+          },
+          "then": { "required": ["task", "content"] }
+        },
+        {
+          "if": { "properties": { "action": { "const": "mark_needs_review" } } },
+          "then": { "required": ["document_id", "block_id", "reason"] }
+        }
+      ]
+    }
+  }
+}

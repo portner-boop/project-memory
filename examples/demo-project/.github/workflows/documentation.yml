@@ -1,0 +1,32 @@
+name: documentation
+
+on:
+  pull_request:
+    paths:
+      - "frontend/**"
+      - "backend/**"
+      - "docs/**"
+
+jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install repomind
+        run: pipx install repomind
+
+      # Без LLM: структурная валидация документации.
+      - name: Validate documentation
+        run: repomind check --strict
+
+      # Без записи в репозиторий: сообщает, какие документы устарели.
+      # Exit code 2 = документация отстала от кода.
+      - name: Detect stale documentation
+        run: repomind sync --check-only --base origin/${{ github.base_ref }}
