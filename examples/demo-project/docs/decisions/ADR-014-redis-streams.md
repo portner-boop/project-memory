@@ -1,7 +1,7 @@
 ---
 id: ADR-014
 status: accepted
-task: ABSHTRUE-657
+task: ABSHTRUE-612
 date: 2026-07-24
 ---
 
