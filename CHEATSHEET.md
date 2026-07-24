@@ -4,37 +4,92 @@
 
 ---
 
-## Команды
+## Обычный день
 
 ```bash
-repomind init                    # каркас docs/, AGENTS.md, CLAUDE.md, skills
-repomind task ABSHTRUE-657       # завести задачу
-repomind plan ABSHTRUE-657       # план + PM-summary          ← LLM
-repomind sync --task ABSHTRUE-657  # обновить документацию    ← LLM
-repomind check                   # валидация
-repomind index                   # пересобрать _index.json
+# ТЗ пришло в Word — перетащил файл в docs/requirements/inbox/
+repomind task           # завёл задачу, ID взялся из имени файла
+repomind plan           # разбор + оценка + summary
+# ... пишешь код ...
+repomind sync           # обновил документацию по diff
+repomind check          # проверил
+git diff                # посмотрел глазами
+```
+
+Без аргументов команды берут текущую задачу из `docs/now/current-task.md`.
+
+## Все команды
+
+```bash
+repomind init     # развернуть обвязку в проекте
+repomind task     # ТЗ из inbox → папка задачи
+repomind plan     # deep-dive + estimate + summary     ← модель
+repomind sync     # обновить документацию по diff      ← модель
+repomind check    # валидация
+repomind index    # пересобрать _index.json
 ```
 
 Из агентов:
 
 ```text
-Claude Code   /docs-plan ABSHTRUE-657     /docs-sync ABSHTRUE-657
-Codex         $docs-plan ABSHTRUE-657     $docs-sync ABSHTRUE-657
+Claude Code   /docs-plan DEMO-657     /docs-sync
+Codex         $docs-plan DEMO-657     $docs-sync
 ```
 
-## Флаги, которые реально нужны
+## Флаги
 
-| Флаг           | Где    | Смысл                                        |
-| -------------- | ------ | -------------------------------------------- |
-| `--base <ref>` | plan, sync | база diff, по умолчанию `origin/main`    |
-| `--check-only` | sync   | ничего не писать, только сказать что устарело |
-| `--dry-run`    | sync   | показать операции модели, не применяя         |
-| `--strict`     | check  | warning → ошибка                              |
-| `--no-symlink` | init   | копировать skills (Windows)                   |
+| Флаг | Где | Смысл |
+|---|---|---|
+| `--base <ref>` | plan, sync | база diff, по умолчанию `origin/main` |
+| `--check-only` | sync | не писать, только сказать что устарело |
+| `--dry-run` | sync | показать операции, не применяя |
+| `--strict` | check | warning → ошибка |
+| `--no-symlink` | init | копировать скиллы (Windows) |
+| `--with-ci` | init | добавить GitHub Actions |
 
-## Коды возврата
+Коды возврата: `0` ок · `1` ошибки валидации · `2` документация устарела ·
+`3` ошибка окружения
 
-`0` ок · `1` ошибки валидации · `2` документация устарела · `3` ошибка окружения
+---
+
+## Загрузка ТЗ
+
+```text
+1. кинуть файл в docs/requirements/inbox/
+2. repomind task
+```
+
+| Формат | |
+|---|---|
+| `.docx` | основной сценарий, таблицы и картинки сохраняются |
+| `.pdf` `.xlsx` | поддерживаются |
+| `.md` `.txt` | как есть |
+
+Номер задачи: имя файла → первые строки текста → спросят.
+Оригинал остаётся в `requirements/original/` рядом с конвертированным `.md`.
+
+Другие способы:
+
+```bash
+repomind task DEMO-657 путь/к/файлу.docx   # файл не в inbox
+repomind task DEMO-657                     # откроется $EDITOR
+pbpaste | repomind task DEMO-657           # из буфера
+```
+
+---
+
+## Что создаёт `init`
+
+```text
+AGENTS.md  CLAUDE.md
+.agents/skills/docs-plan/  docs-sync/   ← скиллы, обычные .md файлы
+.claude/skills/ → symlinks               .claude/settings.json (хук)
+.repomind/config.yml
+docs/  product/ architecture/ contracts/ decisions/ requirements/ tasks/ now/
+docs/decisions/README.md + _template.md  ← что такое ADR и болванка
+```
+
+Скиллы копируются в проект — дальше они твои: правь, коммить, ревьюй.
 
 ---
 
@@ -42,59 +97,81 @@ Codex         $docs-plan ABSHTRUE-657     $docs-sync ABSHTRUE-657
 
 ```md
 ---
-id: ARCH-AUTH
-type: architecture
+id: PRODUCT-REPORTS
+type: product
 code_paths:
-  - backend/app/auth/**
-last_verified_commit: a91d2f4
+  - backend/app/report/**
+last_verified_commit: 7c3e910
 ---
 
-# Авторизация
+## Расход за этап
+<!-- block: REPORT.STAGE_EXPENSE -->
 
-## Обновление токена
-<!-- block: AUTH.REFRESH_TOKEN -->
-
-Refresh token хранится в HTTP-only cookie.
-Основная реализация: `backend/app/auth/service.py#AuthService.refresh`.
+Сумма расходов по принятым отчётам за период этапа.
+Расчёт: `backend/app/report/services/expenses.py#calc_stage_expense`.
 ```
 
 **ID документа** — `SCREAMING-KEBAB` · **ID блока** — `SCOPE.NAME` · не переименовываются.
 
+`code_paths` — связь «документ ↔ код». По ней система понимает, что задето.
+
 ## Ссылки на код
 
 ```text
-✅ backend/app/auth/service.py#AuthService.refresh
-❌ backend/app/auth/service.py:142
+✅ backend/app/report/services/expenses.py#calc_stage_expense
+❌ backend/app/report/services/expenses.py:142
+```
+
+Номера строк допустимы **только** внутри `docs/tasks/<ID>/deep-dive.md`.
+
+---
+
+## Состав папки задачи
+
+| Файл | Кто пишет |
+|---|---|
+| `request.md` | `repomind task` |
+| `deep-dive.md` | `repomind plan` — разбор + план |
+| `estimate.md` | `repomind plan` — часы |
+| `summary.md` | `repomind plan` — 3 абзаца для людей |
+| `progress.md` | агент по ходу работы |
+| `result.md` | `repomind sync` |
+
+Структура `deep-dive.md`:
+
+```text
+Что нужно сделать · Короткий вывод · Как это работает сейчас ·
+Рекомендуемая реализация · Что конкретно затронем (+ «не трогаем») ·
+Риски · План реализации · Проверка · Файлы
 ```
 
 ---
 
 ## Обновлять документацию или нет
 
-| ❌ Не обновлять постоянную док-цию | ✅ Обновлять                    |
-| ---------------------------------- | ------------------------------- |
-| переименование переменной          | пользовательское поведение      |
-| форматирование                     | API                             |
-| перенос функции без поведения      | схема БД                        |
-| опечатка                           | форматы событий                 |
-| внутренний тест                    | конфигурация                    |
-| мелкий рефакторинг                 | способы запуска                 |
-| изменение комментария              | архитектурные границы           |
-|                                    | бизнес-правила                  |
-|                                    | внешние интеграции              |
-|                                    | требования безопасности         |
-|                                    | принятое техническое решение    |
+| ❌ Не трогать постоянную док-цию | ✅ Обновлять |
+|---|---|
+| переименование переменной | пользовательское поведение |
+| форматирование | API |
+| перенос функции без поведения | схема БД |
+| опечатка | форматы событий |
+| внутренний тест | конфигурация |
+| мелкий рефакторинг | способы запуска |
+| изменение комментария | архитектурные границы |
+| | бизнес-правила |
+| | внешние интеграции |
+| | требования безопасности |
+| | принятое техническое решение |
 
 При обычном рефакторинге достаточно `docs/tasks/<ID>/result.md`.
-Постоянные архитектурные документы не трогаются.
 
 ## ADR — когда создавать
 
-Только при **реальном архитектурном решении**: выбор технологии, смена
-хранилища, отказ от принятого подхода, осознанная пауза.
-**Не на каждый рефакторинг.**
+Только на **настоящее решение**: выбор технологии, смена хранилища, отказ от
+принятого подхода, осознанная пауза. **Не на рефакторинг.**
 
-Статусы: `proposed` → `accepted` → `superseded` / `rejected` / `on-hold`
+Статусы: `proposed` → `accepted` → `superseded` / `rejected` / `on-hold`.
+Отменённый ADR не удаляется — меняется статус.
 
 ---
 
@@ -102,31 +179,31 @@ Refresh token хранится в HTTP-only cookie.
 
 Модель **не пишет файлы**. Она возвращает JSON:
 
-| `action`             | Обязательные поля                          |
-| -------------------- | ------------------------------------------ |
-| `replace_block`      | `document_id`, `block_id`, `content`, `evidence` |
-| `append_block`       | `document_id`, `block_id`, `content`, `evidence` |
-| `create_document`    | `document_id`, `content`, `evidence`       |
-| `create_adr`         | `content`                                  |
-| `append_task_result` | `task`, `content`                          |
-| `mark_needs_review`  | `document_id`, `block_id`, `reason`        |
+| `action` | Обязательные поля |
+|---|---|
+| `replace_block` | `document_id`, `block_id`, `content`, `evidence` |
+| `append_block` | `document_id`, `block_id`, `content`, `evidence` |
+| `create_document` | `document_id`, `content`, `evidence` |
+| `create_adr` | `content` |
+| `append_task_result` | `task`, `content` |
+| `mark_needs_review` | `document_id`, `block_id`, `reason` |
 
 `status`: `no_changes` · `update_required` · `needs_review`
 
-Правило: **утверждение без `evidence` не применяется.**
-Не выводится намерение из кода → `mark_needs_review`, не выдумка.
+**Утверждение без `evidence` не применяется.**
+Не выводится намерение из кода → `mark_needs_review`, а не догадка.
 
 ---
 
 ## Что уходит в модель, а что нет
 
-| ✅ Отправляется                        | ❌ Не отправляется        |
-| -------------------------------------- | ------------------------- |
-| Jira-задача                            | весь репозиторий          |
-| изменённые фрагменты кода              | вся документация          |
-| сигнатуры изменённых классов и функций | все предыдущие задачи     |
-| связанные блоки документации           | полный Git history        |
-| текущий implementation plan            |                           |
+| ✅ Отправляется | ❌ Не отправляется |
+|---|---|
+| текст задачи | весь репозиторий |
+| хунки diff | вся документация |
+| сигнатуры изменённых функций | другие задачи |
+| **только связанные блоки** | git history |
+| текущий deep-dive | |
 
 → расход токенов зависит от размера **изменения**, а не проекта.
 
@@ -134,68 +211,27 @@ Refresh token хранится в HTTP-only cookie.
 
 ## Skill / hook / MCP / субагент
 
-| Механизм | Вопрос          | Роль                      | В v1 |
-| -------- | --------------- | ------------------------- | :--: |
-| Skill    | **как** сделать | ядро продукта             | ✅   |
-| Hook     | **когда** запустить | удобство, не ядро     | ⏳   |
-| MCP      | откуда данные   | только Jira/Confluence/GitHub | ⏳ |
-| Субагент | кто параллельно | только крупные задачи     | ❌   |
+| Механизм | Вопрос | Роль | В v1 |
+|---|---|---|:---:|
+| Skill | **как** сделать | ядро продукта | ✅ |
+| Hook | **когда** запустить | удобство | ⏳ |
+| MCP | откуда данные | только Jira/Confluence/GitHub | ⏳ |
+| Субагент | кто параллельно | только крупные задачи | ❌ |
 
 ⚠️ **`Stop` в Claude Code срабатывает после каждого ответа модели.**
-Полный sync туда вешать нельзя — дорого и шумно.
-
-Правильно:
+Полный sync туда вешать нельзя.
 
 ```text
-правка файла        → hook помечает .repomind/dirty   (бесплатно, часто)
-TaskCompleted / pre-commit / вручную → repomind sync  (дорого, редко)
-CI                  → repomind check + sync --check-only
+правка файла   → PostToolUse   → touch .repomind/dirty    бесплатно
+задача готова  → TaskCompleted → repomind sync            1 вызов
+перед коммитом → git pre-commit → repomind check          бесплатно
 ```
 
 ---
 
-## Раскладка проекта
+## `repomind check` проверяет (без модели)
 
-```text
-AGENTS.md                  ← единственный источник правил
-CLAUDE.md                  ← @AGENTS.md, и всё
-.agents/skills/<name>/     ← настоящий skill (Codex читает отсюда)
-.claude/skills/<name>      ← symlink на него (Claude читает отсюда)
-docs/
-  _index.json              ← генерируется, не редактируется
-  product/ architecture/ contracts/   ← постоянное
-  decisions/               ← ADR, append-only
-  requirements/original/   ← неизменяемое
-  tasks/<JIRA-ID>/         ← временное
-  now/current-task.md      ← указатель на активную задачу
-```
-
-```bash
-mkdir -p .claude/skills
-ln -s ../../.agents/skills/docs-sync .claude/skills/docs-sync
-```
-
-Лимиты: `AGENTS.md` — 32 KiB на все проектные инструкции ·
-`CLAUDE.md` — держать короче ~200 строк.
-
----
-
-## `repomind check` проверяет (без LLM)
-
-уникальность document ID · уникальность block ID · существование code
-references · битые Markdown-ссылки · ссылки на удалённые файлы · наличие
-обязательных task-файлов · соответствие JSON Schema · устаревшие
-`last_verified_commit` · слишком большие документы · конфликтующие активные решения
-
----
-
-## Полный цикл одной задачи
-
-```bash
-repomind task ABSHTRUE-657 --source docs/requirements/original/ABSHTRUE-657.md
-repomind plan ABSHTRUE-657
-# ... разработка по implementation-plan.md ...
-repomind sync --task ABSHTRUE-657 --base origin/main
-repomind check
-git diff        # ← человек ревьюит документацию как обычный код
-```
+уникальность document ID · уникальность block ID · существование
+`path#Symbol` · битые markdown-ссылки · ссылки на удалённые файлы ·
+обязательные файлы задачи · соответствие JSON Schema · протухший
+`last_verified_commit` · слишком большие документы · конфликтующие активные ADR

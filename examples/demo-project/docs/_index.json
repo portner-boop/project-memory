@@ -2,48 +2,125 @@
   "generated_by": "repomind index",
   "schema_version": 1,
   "documents": {
+    "PRODUCT-OVERVIEW": {
+      "path": "docs/product/overview.md",
+      "type": "product",
+      "code_paths": ["backend/app/application/**"],
+      "last_verified_commit": "7c3e910",
+      "blocks": ["OVERVIEW.WHAT", "OVERVIEW.FLOW", "OVERVIEW.GLOSSARY"]
+    },
+    "PRODUCT-REPORTS": {
+      "path": "docs/product/reports.md",
+      "type": "product",
+      "code_paths": [
+        "backend/app/report/**",
+        "backend/app/expense/**",
+        "frontend/components/pages/report/**"
+      ],
+      "last_verified_commit": "7c3e910",
+      "blocks": [
+        "REPORT.DEFINITION",
+        "REPORT.LIFECYCLE",
+        "REPORT.TOTAL_EXPENSE",
+        "REPORT.STAGE_EXPENSE",
+        "REPORT.DEFAULT_SORTING",
+        "REPORT.PDF"
+      ]
+    },
+    "ARCH-SYSTEM": {
+      "path": "docs/architecture/system.md",
+      "type": "architecture",
+      "code_paths": [
+        "backend/**",
+        "frontend/**",
+        "pdf-service/**",
+        "docker-compose.yml"
+      ],
+      "last_verified_commit": "7c3e910",
+      "blocks": [
+        "SYSTEM.PARTS",
+        "SYSTEM.BOUNDARIES",
+        "SYSTEM.INTEGRATION",
+        "SYSTEM.LEGACY"
+      ]
+    },
+    "ARCH-BACKEND": {
+      "path": "docs/architecture/backend.md",
+      "type": "architecture",
+      "code_paths": ["backend/**"],
+      "last_verified_commit": "7c3e910",
+      "blocks": [
+        "BACKEND.APPS",
+        "BACKEND.LAYERS",
+        "BACKEND.COMPUTED_FIELDS",
+        "BACKEND.STAGE_STATUSES",
+        "BACKEND.PERIODS",
+        "BACKEND.COMMANDS"
+      ]
+    },
+    "ARCH-FRONTEND": {
+      "path": "docs/architecture/frontend.md",
+      "type": "architecture",
+      "code_paths": ["frontend/**"],
+      "last_verified_commit": "7c3e910",
+      "blocks": [
+        "FRONTEND.STRUCTURE",
+        "FRONTEND.REPORT_TABLES",
+        "FRONTEND.DATA",
+        "FRONTEND.CONVENTIONS"
+      ]
+    },
+    "ARCH-PDF": {
+      "path": "docs/architecture/pdf-service.md",
+      "type": "architecture",
+      "code_paths": ["pdf-service/**", "backend/app/pdf/**"],
+      "last_verified_commit": "7c3e910",
+      "blocks": ["PDF.SCOPE", "PDF.ENDPOINTS", "PDF.ADD_COLUMN", "PDF.TESTS"]
+    },
     "ARCH-AUTH": {
       "path": "docs/architecture/auth.md",
       "type": "architecture",
       "code_paths": ["backend/app/auth/**"],
       "last_verified_commit": "a91d2f4",
-      "blocks": [
-        "AUTH.ACCESS_TOKEN",
-        "AUTH.REFRESH_TOKEN",
-        "AUTH.LOGOUT"
-      ]
+      "blocks": ["AUTH.ACCESS_TOKEN", "AUTH.REFRESH_TOKEN", "AUTH.LOGOUT"]
     },
-    "PRODUCT-CONTESTS": {
-      "path": "docs/product/contests.md",
-      "type": "product",
+    "CONTRACT-API": {
+      "path": "docs/contracts/api.md",
+      "type": "contract",
       "code_paths": [
-        "backend/app/contest/**",
-        "frontend/src/pages/ContestsPage.vue"
+        "backend/app/**/views/**",
+        "backend/app/**/serializers/**"
       ],
       "last_verified_commit": "7c3e910",
       "blocks": [
-        "CONTEST.DEFINITION",
-        "CONTEST.DEFAULT_SORTING",
-        "CONTEST.STATUSES"
+        "API.STAGE_RETRIEVE",
+        "API.STAGE_SET_STATUS",
+        "API.COMPATIBILITY"
       ]
     }
   },
   "decisions": {
-    "ADR-014": {
-      "path": "docs/decisions/ADR-014-redis-streams.md",
+    "ADR-001": {
+      "path": "docs/decisions/ADR-001-pdf-service.md",
       "status": "accepted",
-      "task": "ABSHTRUE-612",
-      "date": "2026-07-24"
+      "task": "DEMO-104",
+      "date": "2025-03-12"
+    },
+    "ADR-002": {
+      "path": "docs/decisions/ADR-002-snapshot-on-accept.md",
+      "status": "accepted",
+      "task": "DEMO-231",
+      "date": "2025-06-04"
     }
   },
   "tasks": {
-    "ABSHTRUE-657": {
-      "path": "docs/tasks/ABSHTRUE-657",
+    "DEMO-657": {
+      "path": "docs/tasks/DEMO-657",
       "files": [
         "request.md",
-        "analysis.md",
-        "implementation-plan.md",
-        "pm-summary.md",
+        "deep-dive.md",
+        "estimate.md",
+        "summary.md",
         "progress.md",
         "result.md"
       ]

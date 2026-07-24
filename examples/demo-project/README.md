@@ -1,129 +1,121 @@
-# Демо-проект RepoMind
+# Демо-проект
 
-Минимальный, но полный пример того, как выглядит проект с настроенной
-инкрементальной памятью. Кода приложения здесь нет — только всё, что вокруг него.
+Так выглядит проект с настроенным RepoMind. Кода приложения тут нет — только
+всё, что вокруг него. Файлы написаны руками; они показывают, **что должно
+получаться**, когда CLI будет написан.
 
-## Что внутри
+Система для примера: платформа приёма заявок на гранты. Монорепо из трёх
+частей — Django backend, Vue frontend и FastAPI-сервис генерации PDF.
+Специально взят такой состав, потому что на нём видны реальные сложности:
+legacy-ветка, снапшоты вычисляемых значений, независимые релизы сервисов.
 
-```text
-demo-project/
-├── AGENTS.md                        # правила для агентов (единственный источник)
-├── CLAUDE.md                        # одна строка: @AGENTS.md
-├── .agents/skills/                  # настоящие skills
-│   ├── docs-plan/SKILL.md
-│   └── docs-sync/SKILL.md + schemas/
-├── .claude/
-│   ├── skills/                      # symlinks на .agents/skills
-│   └── settings.json                # hook: пометить проект dirty
-├── .github/workflows/documentation.yml
-└── docs/
-    ├── _index.json                  # генерируется repomind index
-    ├── product/contests.md          # PRODUCT-CONTESTS, 3 блока
-    ├── architecture/auth.md         # ARCH-AUTH, 3 блока
-    ├── decisions/ADR-014-*.md
-    ├── requirements/original/
-    ├── tasks/ABSHTRUE-657/          # полный цикл задачи
-    └── now/current-task.md
-```
+---
 
-## Сквозной сценарий: задача ABSHTRUE-657
+## Смотреть в этом порядке
 
-Задача — «сверху списка должны быть свежие конкурсы». Пройди по файлам в этом
-порядке, и станет видно, как контекст сужается на каждом шаге.
+### 1. Что агент читает всегда
 
-### 1. Задача заводится
+[`AGENTS.md`](AGENTS.md) — 55 строк постоянных правил. Обрати внимание на
+раздел «Project-specific traps»: три ловушки, на которых новый человек теряет
+день, стоят три строки в файле.
 
-```bash
-repomind task ABSHTRUE-657 \
-  --source docs/requirements/original/ABSHTRUE-657.md
-```
+[`CLAUDE.md`](CLAUDE.md) — одна строка `@AGENTS.md`.
 
-→ [`docs/tasks/ABSHTRUE-657/request.md`](docs/tasks/ABSHTRUE-657/request.md)
-→ [`docs/now/current-task.md`](docs/now/current-task.md)
+### 2. Как выглядит архитектурная документация
 
-### 2. Планирование
+[`docs/architecture/system.md`](docs/architecture/system.md) — начни отсюда.
+Схема из трёх частей, границы ответственности, и главное — **практические
+выводы**: «если в PDF надо показать новое значение — считает backend, в сервисе
+меняется только шаблон».
 
-```bash
-repomind plan ABSHTRUE-657      # или /docs-plan ABSHTRUE-657
-```
+Дальше по вкусу:
+[backend](docs/architecture/backend.md) ·
+[frontend](docs/architecture/frontend.md) ·
+[pdf-service](docs/architecture/pdf-service.md) ·
+[auth](docs/architecture/auth.md)
 
-→ [`analysis.md`](docs/tasks/ABSHTRUE-657/analysis.md) — **здесь главное**:
-видно, что из двух документов прочитан только `PRODUCT-CONTESTS`, а `ARCH-AUTH`
-пропущен, потому что `backend/app/auth/**` не пересекается с diff.
+Каждый документ размечен блоками `<!-- block: ... -->` и имеет `code_paths`
+во frontmatter — по ним система понимает, какой документ задет изменением.
 
-→ [`implementation-plan.md`](docs/tasks/ABSHTRUE-657/implementation-plan.md) — для разработчика
-→ [`pm-summary.md`](docs/tasks/ABSHTRUE-657/pm-summary.md) — для PM, без единого пути к файлу
+### 3. Как выглядит решение
 
-### 3. Разработка
+[`docs/decisions/README.md`](docs/decisions/README.md) — что такое ADR и когда
+его писать. **Этот файл создаёт `repomind init`**, вместе с
+[`_template.md`](docs/decisions/_template.md).
 
-→ [`progress.md`](docs/tasks/ABSHTRUE-657/progress.md) — отмеченные пункты
-и зафиксированное отклонение от плана.
+[`ADR-001`](docs/decisions/ADR-001-pdf-service.md) — почему PDF вынесен
+в отдельный сервис. Секция «Альтернативы» — самая ценная: она закрывает вопрос
+«а вы вообще думали про X?».
 
-### 4. Синхронизация
+[`ADR-002`](docs/decisions/ADR-002-snapshot-on-accept.md) — почему значения
+фиксируются снапшотом. На него потом ссылается разбор задачи.
 
-```bash
-repomind sync --task ABSHTRUE-657 --base origin/main
-```
+### 4. Как проходит задача — DEMO-657
 
-Модель возвращает **операции**, а не текст файлов:
+Задача: добавить read-only колонку «Расход за этап».
 
-```json
-{
-  "status": "update_required",
-  "operations": [
-    {
-      "action": "replace_block",
-      "document_id": "PRODUCT-CONTESTS",
-      "block_id": "CONTEST.DEFAULT_SORTING",
-      "content": "По умолчанию конкурсы сортируются...",
-      "evidence": [
-        "backend/app/contest/service.py#ContestService.get_all",
-        "frontend/src/pages/ContestsPage.vue#defaultSort"
-      ],
-      "confidence": 0.94
-    },
-    { "action": "append_task_result", "task": "ABSHTRUE-657", "content": "..." }
-  ]
-}
-```
+| Шаг | Файл | Что смотреть |
+|---|---|---|
+| ТЗ приехало в Word | [request.md](docs/tasks/DEMO-657/request.md) | сконвертировано, оригинал сохранён рядом |
+| Технический разбор | [**deep-dive.md**](docs/tasks/DEMO-657/deep-dive.md) | ← **главный файл примера** |
+| Оценка | [estimate.md](docs/tasks/DEMO-657/estimate.md) | 16 часов с разбивкой и допущениями |
+| Для менеджера | [summary.md](docs/tasks/DEMO-657/summary.md) | 3 абзаца, ни одного пути к файлу |
+| Ход работы | [progress.md](docs/tasks/DEMO-657/progress.md) | отмеченные пункты + зафиксированные отклонения |
+| Итог | [result.md](docs/tasks/DEMO-657/result.md) | дописан командой `sync` |
 
-Схема, которой обязан соответствовать ответ:
-[`sync-operations.schema.json`](.agents/skills/docs-sync/schemas/sync-operations.schema.json)
+**`deep-dive.md` — то, ради чего всё затевается.** Там: как работает сейчас
+с путями и номерами строк, готовый код к написанию, список «что не трогаем»,
+семь пронумерованных рисков, план по частям, команды проверки и ручной сценарий.
 
-Результат применения:
-→ обновлён **один блок** в [`docs/product/contests.md`](docs/product/contests.md)
-→ дописан [`result.md`](docs/tasks/ABSHTRUE-657/result.md)
+Отдельно обрати внимание на раздел **«не трогаем»** — он снимает вопросы
+«а не надо ли ещё вот тут?» и ловит мёртвый код заранее.
 
-Файл [`docs/architecture/auth.md`](docs/architecture/auth.md) не тронут вообще —
-он в этом сценарии существует именно для того, чтобы показать, что его не
-читают и не переписывают.
+### 5. Что делает синхронизация
 
-### 5. Проверка
+Сравни [`result.md`](docs/tasks/DEMO-657/result.md) и блок
+`REPORT.STAGE_EXPENSE` в [`docs/product/reports.md`](docs/product/reports.md).
 
-```bash
-repomind check
-```
+Изменился **один блок** в постоянной документации. Файл
+[`docs/architecture/auth.md`](docs/architecture/auth.md) не тронут вообще —
+`backend/app/auth/**` не пересёкся с diff. Он в примере существует именно для
+того, чтобы показать, что его **не читают и не переписывают**.
+
+### 6. Куда кидать ТЗ
+
+[`docs/requirements/inbox/`](docs/requirements/inbox/README.md) — перетащил
+`.docx`, набрал `repomind task`, всё. Без аргументов и путей.
+
+---
 
 ## Что показывает пример
 
-| Идея                              | Где смотреть                                    |
-| --------------------------------- | ----------------------------------------------- |
-| атомарные блоки                   | `docs/product/contests.md`, `docs/architecture/auth.md` |
-| стабильные ID и `code_paths`      | frontmatter любого постоянного документа        |
-| ссылки `path#Symbol`              | везде; ни одного номера строки                  |
-| каталог генерируется скриптом     | `docs/_index.json`                              |
-| отбор контекста по diff           | `docs/tasks/ABSHTRUE-657/analysis.md`           |
-| structured output вместо записи   | `.agents/skills/docs-sync/`                     |
-| ADR только для решений            | `docs/decisions/ADR-014-redis-streams.md`       |
-| один skill на двух агентов        | `.agents/skills/` + symlinks в `.claude/skills/`|
-| дешёвый hook + дорогой sync       | `.claude/settings.json`                         |
-| CI без записи в ветку             | `.github/workflows/documentation.yml`           |
+| Идея | Где смотреть |
+|---|---|
+| атомарные блоки | любой документ в `architecture/` |
+| стабильные ID и `code_paths` | frontmatter постоянных документов |
+| ссылки `path#Symbol` | постоянная документация |
+| номера строк допустимы в разборе задачи | `deep-dive.md` |
+| каталог генерируется скриптом | [`_index.json`](docs/_index.json) |
+| отбор контекста по diff | `auth.md`, который не читали |
+| structured output вместо записи в файлы | [docs-sync/SKILL.md](.agents/skills/docs-sync/SKILL.md) |
+| планка качества разбора | [docs-plan/SKILL.md](.agents/skills/docs-plan/SKILL.md) |
+| ADR только на решения | `decisions/` |
+| один скилл на двух агентов | `.agents/skills/` + symlinks в `.claude/skills/` |
+| дешёвый хук + дорогой sync | [.claude/settings.json](.claude/settings.json) |
 
-## Symlinks на Windows
+## Symlinks
 
 ```bash
-ln -s ../../.agents/skills/docs-sync .claude/skills/docs-sync
+ls -la .claude/skills/
+# docs-plan -> ../../.agents/skills/docs-plan
+# docs-sync -> ../../.agents/skills/docs-sync
 ```
 
-Если symlink недоступен — установщик копирует директорию:
-`repomind init --no-symlink`.
+Настоящие файлы лежат в `.agents/skills/` (оттуда их читает Codex), Claude Code
+видит их через ссылку. Всё это делает `repomind init`; на Windows — копирует.
+
+## Чего в примере нет
+
+**GitHub Actions.** Сознательно: CI не входит в первую версию, чтобы не
+усложнять старт. Включается одной командой `repomind init --with-ci` в любой
+момент — см. [05-roadmap](../../docs/05-roadmap.md#ci--можно-включить-в-любой-момент).

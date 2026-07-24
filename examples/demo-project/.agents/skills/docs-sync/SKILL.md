@@ -68,19 +68,19 @@ Respond with JSON conforming to `schemas/sync-operations.schema.json`:
   "operations": [
     {
       "action": "replace_block",
-      "document_id": "PRODUCT-CONTESTS",
-      "block_id": "CONTEST.DEFAULT_SORTING",
-      "content": "По умолчанию конкурсы сортируются...",
+      "document_id": "PRODUCT-REPORTS",
+      "block_id": "REPORT.STAGE_EXPENSE",
+      "content": "Сумма расходов по принятым отчётам, период которых...",
       "evidence": [
-        "backend/app/contest/service.py#ContestService.get_all",
-        "frontend/src/pages/ContestsPage.vue#defaultSort"
+        "backend/app/report/services/expenses.py#calc_stage_expense",
+        "frontend/components/pages/report/tables/ExpensesTable.vue"
       ],
       "confidence": 0.94
     },
     {
       "action": "append_task_result",
-      "task": "ABSHTRUE-657",
-      "content": "Изменена сортировка конкурсов..."
+      "task": "DEMO-657",
+      "content": "Добавлена колонка «Расход за этап»..."
     }
   ]
 }
