@@ -125,8 +125,13 @@ CodeGraph   ГДЕ код и как связан    ← из кода
 RepoMind    ПОЧЕМУ так              ← из головы человека
 ```
 
+Поднимать отдельно не надо — `repomind init` сам запустит `codegraph init`
+(фоном, параллельно разворачиванию структуры) и `codegraph install`.
+Не установлен — покажет команду и пойдёт дальше, сам ставить не будет.
+
 ```bash
-codegraph init && codegraph install     # один раз
+npm i -g @colbymchenry/codegraph    # если решил поставить
+repomind init                       # подхватит и настроит
 ```
 
 | Что даёт | Команда |
