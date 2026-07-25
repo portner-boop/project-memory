@@ -7,11 +7,19 @@
 ## Без CLI, прямо сейчас
 
 ```bash
-./skills/install.sh /путь/к/проекту
+./skills/install.sh /путь/к/проекту     # установка инструмента, разово
 ```
 
-Дальше в агенте: `/docs-init` — осмотрит проект и развернёт структуру.
-Затем `/docs-plan ABC-123` и `/docs-sync` вместо соответствующих команд.
+Дальше всё через агента. Скилл и будущая команда CLI называются одинаково:
+
+| Скилл | CLI | Что делает |
+|---|---|---|
+| `/docs-init` | `repomind init` | развернуть структуру |
+| `/docs-task` | `repomind task` | ТЗ из Word → папка задачи |
+| `/docs-plan ABC-123` | `repomind plan` | разбор + оценка в часах |
+| `/docs-do` | `repomind do` | выполнить план по шагам + тесты |
+| `/docs-sync` | `repomind sync` | обновить документацию по diff |
+| `/docs-check` | `repomind check` | валидация + пересборка каталога |
 
 Подробности — [skills/README.md](skills/README.md).
 
@@ -23,7 +31,7 @@
 # ТЗ пришло в Word — перетащил файл в docs/requirements/inbox/
 repomind task           # завёл задачу, ID взялся из имени файла
 repomind plan           # разбор + оценка + summary
-# ... пишешь код ...
+repomind do             # выполнил план по шагам, после каждого — тесты
 repomind sync           # обновил документацию по diff
 repomind check          # проверил
 git diff                # посмотрел глазами
@@ -37,6 +45,7 @@ git diff                # посмотрел глазами
 repomind init     # развернуть обвязку в проекте
 repomind task     # ТЗ из inbox → папка задачи
 repomind plan     # deep-dive + estimate + summary     ← модель
+repomind do       # выполнить план по шагам + тесты    ← модель
 repomind sync     # обновить документацию по diff      ← модель
 repomind check    # валидация
 repomind index    # пересобрать _index.json
@@ -45,8 +54,8 @@ repomind index    # пересобрать _index.json
 Из агентов:
 
 ```text
-Claude Code   /docs-plan DEMO-657     /docs-sync
-Codex         $docs-plan DEMO-657     $docs-sync
+Claude Code   /docs-plan DEMO-657    /docs-do    /docs-sync
+Codex         $docs-plan DEMO-657    $docs-do    $docs-sync
 ```
 
 ## Флаги
@@ -54,6 +63,9 @@ Codex         $docs-plan DEMO-657     $docs-sync
 | Флаг | Где | Смысл |
 |---|---|---|
 | `--base <ref>` | plan, sync | база diff, по умолчанию `origin/main` |
+| `--from <N>` | do | начать с пункта N плана |
+| `--only <N>` | do | выполнить ровно один пункт |
+| `--no-verify` | do | не гонять тесты после шага |
 | `--check-only` | sync | не писать, только сказать что устарело |
 | `--dry-run` | sync | показать операции, не применяя |
 | `--strict` | check | warning → ошибка |
@@ -95,8 +107,8 @@ pbpaste | repomind task DEMO-657           # из буфера
 
 ```text
 AGENTS.md  CLAUDE.md
-.agents/skills/docs-plan/  docs-sync/   ← скиллы, обычные .md файлы
-.claude/skills/ → symlinks               .claude/settings.json (хук)
+.agents/skills/  init task plan do sync check   ← обычные .md файлы
+.claude/skills/ → symlinks                       .claude/settings.json (хук)
 .repomind/config.yml
 docs/  product/ architecture/ contracts/ decisions/ requirements/ tasks/ now/
 docs/decisions/README.md + _template.md  ← что такое ADR и болванка
@@ -214,7 +226,7 @@ last_verified_commit: 7c3e910
 | `deep-dive.md` | `repomind plan` — разбор + план |
 | `estimate.md` | `repomind plan` — часы |
 | `summary.md` | `repomind plan` — 3 абзаца для людей |
-| `progress.md` | агент по ходу работы |
+| `progress.md` | `repomind do` — отмечает по ходу, а не в конце |
 | `result.md` | `repomind sync` |
 
 Структура `deep-dive.md`:
