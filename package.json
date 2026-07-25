@@ -1,7 +1,7 @@
 {
   "name": "repomind-skills",
   "version": "0.1.0",
-  "description": "Память проекта для человека и coding-агента: структура docs/, ADR, runbook и шесть скиллов для Claude Code и Codex",
+  "description": "Память проекта для человека и coding-агента: структура docs/, ADR, runbook и семь скиллов для Claude Code и Codex",
   "bin": {
     "repomind-skills": "bin/install.js"
   },
