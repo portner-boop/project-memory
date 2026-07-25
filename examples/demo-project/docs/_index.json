@@ -17,6 +17,11 @@
         "backend/app/expense/**",
         "frontend/components/pages/report/**"
       ],
+      "symbols": [
+        "backend/app/report/services/expenses.py#calc_stage_expense",
+        "backend/app/report/serializers/stages.py#StageExpenseSerializer",
+        "backend/app/report/repository.py#ReportRepository.list"
+      ],
       "last_verified_commit": "7c3e910",
       "blocks": [
         "REPORT.DEFINITION",
@@ -96,6 +101,77 @@
         "API.STAGE_RETRIEVE",
         "API.STAGE_SET_STATUS",
         "API.COMPATIBILITY"
+      ]
+    },
+    "RUN-SETUP": {
+      "path": "docs/runbook/setup.md",
+      "type": "runbook",
+      "code_paths": [
+        "docker-compose.yml",
+        ".env.example",
+        "backend/requirements*.txt",
+        "frontend/package.json",
+        "pdf-service/pyproject.toml"
+      ],
+      "last_verified_commit": "7c3e910",
+      "blocks": [
+        "SETUP.PREREQUISITES",
+        "SETUP.FIRST_RUN",
+        "SETUP.CREDENTIALS",
+        "SETUP.ENV",
+        "SETUP.SMOKE"
+      ]
+    },
+    "RUN-DAILY": {
+      "path": "docs/runbook/daily.md",
+      "type": "runbook",
+      "code_paths": [
+        "Makefile",
+        "backend/manage.py",
+        "frontend/package.json",
+        "pdf-service/Makefile"
+      ],
+      "last_verified_commit": "7c3e910",
+      "blocks": [
+        "DAILY.TESTS",
+        "DAILY.LINT",
+        "DAILY.MIGRATIONS",
+        "DAILY.COMMANDS",
+        "DAILY.PDF",
+        "DAILY.PRE_COMMIT",
+        "DAILY.RESET"
+      ]
+    },
+    "RUN-TROUBLE": {
+      "path": "docs/runbook/troubleshooting.md",
+      "type": "runbook",
+      "code_paths": [
+        "docker-compose.yml",
+        "backend/config/settings.py",
+        "pdf-service/app/**"
+      ],
+      "last_verified_commit": "7c3e910",
+      "blocks": [
+        "TROUBLE.PDF_502",
+        "TROUBLE.PDF_EMPTY_COLUMN",
+        "TROUBLE.PDF_LAYOUT",
+        "TROUBLE.NODE_VERSION",
+        "TROUBLE.SNAPSHOT_ZERO",
+        "TROUBLE.LEGACY_BRANCH",
+        "TROUBLE.TESTS_LOCAL",
+        "TROUBLE.MIGRATION_CONFLICT"
+      ]
+    },
+    "RUN-RELEASE": {
+      "path": "docs/runbook/release.md",
+      "type": "runbook",
+      "code_paths": [".github/**", "deploy/**", "docker-compose.prod.yml"],
+      "last_verified_commit": "7c3e910",
+      "blocks": [
+        "RELEASE.ORDER",
+        "RELEASE.CHECKLIST",
+        "RELEASE.MIGRATIONS",
+        "RELEASE.ROLLBACK"
       ]
     }
   },

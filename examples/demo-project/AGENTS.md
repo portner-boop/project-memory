@@ -48,6 +48,24 @@ technology choice, storage change, dropping a previously accepted approach,
 or an explicit decision to postpone. Never for a refactoring.
 Template: `docs/decisions/_template.md`.
 
+## Commands
+
+Never guess a command. All of them live in `docs/runbook/daily.md` (`RUN-DAILY`):
+tests, linters, migrations, management commands, pre-commit checklist.
+
+First run from scratch — `docs/runbook/setup.md`.
+Something broke — `docs/runbook/troubleshooting.md`, entries are indexed by symptom.
+
+## Code intelligence
+
+If `.codegraph/` exists, use CodeGraph MCP tools to locate code and trace
+dependencies instead of fanning out with grep and full-file reads:
+
+- `codegraph_explore` — how does X work, how does X reach Y
+- `codegraph_callers` / `codegraph_impact` — what breaks if this changes
+
+Use it for **where the code is**. Use `docs/` for **why it is that way**.
+
 ## Project-specific traps
 
 - Legacy applications render through a separate component, serializer and PDF

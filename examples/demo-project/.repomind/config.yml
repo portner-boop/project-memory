@@ -1,0 +1,33 @@
+# Настройки RepoMind для проекта. Создаётся командой `repomind init`.
+
+task:
+  # по какому шаблону вытаскивать номер задачи из имени файла ТЗ
+  id_pattern: "[A-Z]+-\\d+"
+  jira_base_url: "https://jira.example.local/browse/"
+
+docs:
+  root: docs
+  # документы больше этого размера check пометит как «пора делить на блоки»
+  max_document_lines: 400
+
+sync:
+  base: origin/main
+  # при таких изменениях постоянную документацию не трогаем вообще
+  skip_when:
+    - refactoring_only
+
+codegraph:
+  # auto — использовать, если .codegraph/ есть и бинарь в PATH; иначе тихо откатиться
+  enabled: auto
+  binary: codegraph
+  # глубина обхода графа при поиске задетых документов
+  impact_depth: 2
+  # parallel — переиндексация фоном, параллельно вызову модели
+  reindex_on_sync: parallel
+  fallback: glob
+
+check:
+  # сверять команды из docs/runbook/ с реальными make-таргетами и npm-скриптами
+  verify_runbook_commands: true
+  # предупреждать, если AGENTS.md разросся — он грузится в каждую сессию
+  max_agents_md_lines: 120

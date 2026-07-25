@@ -45,6 +45,10 @@ uvx repomind init
 ✔ docs/contracts/        + README.md
 ✔ docs/decisions/README.md               ЧТО ТАКОЕ ADR и когда его писать
 ✔ docs/decisions/_template.md            болванка ADR
+✔ docs/runbook/setup.md                  каркас: как поднять проект
+✔ docs/runbook/daily.md                  каркас: тесты, линтеры, миграции
+✔ docs/runbook/troubleshooting.md        пустой, заполняется по мере поломок
+✔ docs/runbook/release.md                каркас: порядок выкатки
 ✔ docs/requirements/inbox/.gitkeep       сюда кидать .docx
 ✔ docs/requirements/original/.gitkeep
 ✔ docs/tasks/.gitkeep
@@ -57,6 +61,14 @@ uvx repomind init
 
 То же с ADR: `docs/decisions/README.md` объясняет, зачем нужны решения и когда
 их писать, `_template.md` — форма, которую копируешь.
+
+Файлы `runbook/` создаются **каркасом с угаданными командами**: `init` смотрит
+на `Makefile`, `package.json`, `manage.py`, `docker-compose.yml` и подставляет
+то, что нашёл. Дальше правишь руками — это твои команды, никто их лучше тебя
+не знает.
+
+Если в проекте найден `.codegraph/`, `init` дополнительно пропишет
+`codegraph.enabled: on` в конфиг — см. [07 — Связка с CodeGraph](07-codegraph.md).
 
 ### Флаги
 
@@ -237,6 +249,15 @@ git              через subprocess
 ```
 
 Ни backend, ни базы, ни MCP в первой версии нет.
+
+### Необязательные соседи
+
+| | Что даёт | Если нет |
+|---|---|---|
+| [CodeGraph](07-codegraph.md) | точный отбор документов по графу вызовов, дешёвый `plan`, честная проверка `evidence` | работают маски путей и текстовый поиск |
+
+Жёсткой зависимости нет: `codegraph.enabled: auto` включает связку, только если
+индекс и бинарь на месте.
 
 ## Установка
 
