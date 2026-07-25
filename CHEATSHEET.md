@@ -17,7 +17,7 @@
 | `/docs-init` | `repomind init` | развернуть структуру |
 | `/docs-task` | `repomind task` | ТЗ из Word → папка задачи |
 | `/docs-plan ABC-123` | `repomind plan` | разбор + оценка в часах |
-| `/docs-do` | `repomind do` | выполнить план по шагам + тесты |
+| `/docs-do` | `repomind do` | выполнить план по шагам |
 | `/docs-sync` | `repomind sync` | обновить документацию по diff |
 | `/docs-check` | `repomind check` | валидация + пересборка каталога |
 
@@ -31,7 +31,8 @@
 # ТЗ пришло в Word — перетащил файл в docs/requirements/inbox/
 repomind task           # завёл задачу, ID взялся из имени файла
 repomind plan           # разбор + оценка + summary
-repomind do             # выполнил план по шагам, после каждого — тесты
+# 👀 прочитал deep-dive.md, поставил reviewed: true
+repomind do             # выполнил план по шагам
 repomind sync           # обновил документацию по diff
 repomind check          # проверил
 git diff                # посмотрел глазами
@@ -45,7 +46,7 @@ git diff                # посмотрел глазами
 repomind init     # развернуть обвязку в проекте
 repomind task     # ТЗ из inbox → папка задачи
 repomind plan     # deep-dive + estimate + summary     ← модель
-repomind do       # выполнить план по шагам + тесты    ← модель
+repomind do       # выполнить план по шагам            ← модель
 repomind sync     # обновить документацию по diff      ← модель
 repomind check    # валидация
 repomind index    # пересобрать _index.json
@@ -65,7 +66,7 @@ Codex         $docs-plan DEMO-657    $docs-do    $docs-sync
 | `--base <ref>` | plan, sync | база diff, по умолчанию `origin/main` |
 | `--from <N>` | do | начать с пункта N плана |
 | `--only <N>` | do | выполнить ровно один пункт |
-| `--no-verify` | do | не гонять тесты после шага |
+| `--skip-review` | do | не требовать reviewed: true |
 | `--check-only` | sync | не писать, только сказать что устарело |
 | `--dry-run` | sync | показать операции, не применяя |
 | `--strict` | check | warning → ошибка |
@@ -227,6 +228,7 @@ last_verified_commit: 7c3e910
 | `estimate.md` | `repomind plan` — часы |
 | `summary.md` | `repomind plan` — 3 абзаца для людей |
 | `progress.md` | `repomind do` — отмечает по ходу, а не в конце |
+| `reviewed: true` | **ты** — в шапке `deep-dive.md` после прочитки |
 | `result.md` | `repomind sync` |
 
 Структура `deep-dive.md`:

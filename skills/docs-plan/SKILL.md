@@ -27,6 +27,29 @@ A task ID, e.g. `DEMO-657`. If none is given, read the current task from
    models, serializers, services, components and templates involved. A plan
    built from the requirement alone is worthless.
 7. Write `deep-dive.md`, `estimate.md`, `summary.md`.
+8. Put `reviewed: false` in the `deep-dive.md` frontmatter and hand it over
+   for a human read-through. **Do not start implementing.**
+
+## Handover
+
+The plan is the cheapest place to catch a wrong approach — two pages beat
+half a day of reworked code. So end like this:
+
+```text
+Разбор готов: docs/tasks/DEMO-657/deep-dive.md
+Оценка: 16 часов — docs/tasks/DEMO-657/estimate.md
+
+Прочитай, пожалуйста. Особенно два места:
+  • «Короткий вывод» — правильно ли я понял, как это ложится на архитектуру
+  • «Риски» №1 и №3 — их стоит проговорить с заказчиком до реализации
+
+Согласен — поставь reviewed: true в шапке, дальше /docs-do.
+Что-то не так — правь прямо в файле, я пойду по исправленному.
+```
+
+Назови **конкретные места**, которые стоит перечитать внимательно: спорные
+допущения, риски, требующие подтверждения заказчиком, места, где пришлось
+догадываться. Не «прочитай весь документ».
 
 ## Do not
 

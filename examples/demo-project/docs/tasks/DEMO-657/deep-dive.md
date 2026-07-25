@@ -4,6 +4,7 @@ type: task
 task: DEMO-657
 base: origin/main
 created_by: repomind plan
+reviewed: true          # прочитано человеком, можно запускать repomind do
 ---
 
 # DEMO-657 — технический разбор
