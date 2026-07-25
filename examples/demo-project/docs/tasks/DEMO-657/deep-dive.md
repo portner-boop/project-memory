@@ -3,8 +3,8 @@ id: TASK-DEMO-657-DEEPDIVE
 type: task
 task: DEMO-657
 base: origin/main
-created_by: repomind plan
-reviewed: true          # прочитано человеком, можно запускать repomind do
+created_by: docs-plan
+reviewed: true          # прочитано человеком, можно запускать /docs-do
 ---
 
 # DEMO-657 — технический разбор

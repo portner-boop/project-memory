@@ -3,13 +3,13 @@
 ```text
 ЭТАП                 ЧТО ПРОИСХОДИТ                          КТО РАБОТАЕТ
 ────────────────────────────────────────────────────────────────────────
-1. repomind task     ТЗ (.docx) → папка задачи               скрипт
-2. repomind plan     разбор кода → deep-dive + estimate      МОДЕЛЬ
+1. /docs-task     ТЗ (.docx) → папка задачи               скрипт
+2. /docs-plan     разбор кода → deep-dive + estimate      МОДЕЛЬ
 👀 прочитка плана    читаешь, правишь, ставишь reviewed      ТЫ
-3. repomind do       выполняет план по шагам                 МОДЕЛЬ
-4. repomind sync     git diff → какие абзацы доков поправить МОДЕЛЬ
+3. /docs-do       выполняет план по шагам                 МОДЕЛЬ
+4. /docs-sync     git diff → какие абзацы доков поправить МОДЕЛЬ
 5. применение        операции → markdown                     скрипт
-6. repomind check    валидация документации                  скрипт
+6. /docs-check    валидация документации                  скрипт
 ```
 
 **Единственная обязательная остановка — прочитка плана.** Всё остальное идёт
@@ -19,11 +19,11 @@
 
 ## Этап 1. Загрузка ТЗ
 
-Полностью описан в [04 — CLI](04-cli.md#загрузка-тз). Коротко:
+Полностью описан в [04 — Скиллы](04-skills.md#docs-task--загрузка-тз). Коротко:
 
 ```bash
 # кинул ABSHTRUE-657.docx в docs/requirements/inbox/
-repomind task
+/docs-task
 ```
 
 Word конвертируется в markdown, ID вытаскивается из имени файла, папка задачи
@@ -34,7 +34,7 @@ Word конвертируется в markdown, ID вытаскивается и�
 ## Этап 2. Планирование
 
 ```bash
-repomind plan ABSHTRUE-657
+/docs-plan ABSHTRUE-657
 ```
 
 или из агента: `/docs-plan ABSHTRUE-657`
@@ -99,7 +99,7 @@ codegraph explore "расчёт расходов по этапу отчёта"
 
 ## 👀 Прочитка плана — единственная обязательная остановка
 
-`repomind plan` заканчивается так:
+`/docs-plan` заканчивается так:
 
 ```text
 Разбор готов: docs/tasks/DEMO-657/deep-dive.md
@@ -121,7 +121,7 @@ reviewed: false      # ← меняешь на true, когда прочитал
 ---
 ```
 
-`repomind do` без `reviewed: true` **не запустится**.
+`/docs-do` без `reviewed: true` **не запустится**.
 
 ### Почему это стоит того
 
@@ -144,7 +144,7 @@ reviewed: false      # ← меняешь на true, когда прочитал
 ## Этап 3. Выполнение плана
 
 ```bash
-repomind do
+/docs-do
 ```
 
 Идёт по чеклисту **по одному пункту**:
@@ -215,7 +215,7 @@ draft → open → review → closed.
 Ты закоммитил изменение сортировки. Запускаешь:
 
 ```bash
-repomind sync
+/docs-sync
 ```
 
 ### Шаг 4.1 — скрипт берёт diff
@@ -429,7 +429,7 @@ codegraph impact backend/app/common/periods.py#overlaps
 ## Этап 6. Проверка
 
 ```bash
-repomind check
+/docs-check
 ```
 
 Без всякой модели:
@@ -455,8 +455,8 @@ git diff
 | Момент | Команда | Стоимость |
 |---|---|---|
 | правка файла (хук `PostToolUse`) | `touch .repomind/dirty` | 0 |
-| задача готова (хук `TaskCompleted`) | `repomind sync` | 1 вызов модели |
-| перед коммитом (git pre-commit) | `repomind check` | 0 |
+| задача готова (хук `TaskCompleted`) | `/docs-sync` | 1 вызов модели |
+| перед коммитом (git pre-commit) | `/docs-check` | 0 |
 | руками, когда захотел | любая | — |
 
 ⚠️ Не вешать sync на `Stop` — он срабатывает после **каждого** ответа модели.

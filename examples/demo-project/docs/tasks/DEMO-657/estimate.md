@@ -3,7 +3,7 @@ id: TASK-DEMO-657-ESTIMATE
 type: task
 task: DEMO-657
 total_hours: 16
-created_by: repomind plan
+created_by: docs-plan
 ---
 
 # DEMO-657 — оценка

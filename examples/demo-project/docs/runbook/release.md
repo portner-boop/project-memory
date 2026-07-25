@@ -32,7 +32,7 @@ last_verified_commit: 7c3e910
 - [ ] `makemigrations --check` — нет забытых миграций
 - [ ] миграции обратимы или есть план отката
 - [ ] доливки данных прогнаны в `--dry-run` на копии прода
-- [ ] `repomind check` зелёный
+- [ ] `/docs-check` зелёный
 - [ ] `docs/tasks/<ID>/result.md` заполнен
 
 ## Миграции и доливки

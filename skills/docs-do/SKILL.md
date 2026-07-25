@@ -5,8 +5,7 @@ description: Execute the implementation plan of a task step by step, recording p
 
 # docs-do
 
-Выполняет план из `deep-dive.md` **по шагам**. Заменяет `repomind do`,
-пока CLI нет.
+Выполняет план из `deep-dive.md` **по шагам**, по одному пункту за раз.
 
 ---
 

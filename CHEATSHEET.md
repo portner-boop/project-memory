@@ -4,22 +4,20 @@
 
 ---
 
-## Без CLI, прямо сейчас
+## Установка
 
 ```bash
-./skills/install.sh /путь/к/проекту     # установка инструмента, разово
+npx repomind-skills          # в папке проекта, разово
 ```
 
-Дальше всё через агента. Скилл и будущая команда CLI называются одинаково:
-
-| Скилл | CLI | Что делает |
-|---|---|---|
-| `/docs-init` | `repomind init` | развернуть структуру |
-| `/docs-task` | `repomind task` | ТЗ из Word → папка задачи |
-| `/docs-plan ABC-123` | `repomind plan` | разбор + оценка в часах |
-| `/docs-do` | `repomind do` | выполнить план по шагам |
-| `/docs-sync` | `repomind sync` | обновить документацию по diff |
-| `/docs-check` | `repomind check` | валидация + пересборка каталога |
+| Скилл | Что делает |
+|---|---|
+| `/docs-init` | развернуть структуру под твой стек |
+| `/docs-task` | ТЗ из Word → папка задачи |
+| `/docs-plan ABC-123` | разбор кода, план, оценка в часах |
+| `/docs-do` | выполнить план по шагам |
+| `/docs-sync` | обновить документацию по diff |
+| `/docs-check` | валидация + пересборка каталога |
 
 Подробности — [skills/README.md](skills/README.md).
 
@@ -29,12 +27,12 @@
 
 ```bash
 # ТЗ пришло в Word — перетащил файл в docs/requirements/inbox/
-repomind task           # завёл задачу, ID взялся из имени файла
-repomind plan           # разбор + оценка + summary
+/docs-task           # завёл задачу, ID взялся из имени файла
+/docs-plan           # разбор + оценка + summary
 # 👀 прочитал deep-dive.md, поставил reviewed: true
-repomind do             # выполнил план по шагам
-repomind sync           # обновил документацию по diff
-repomind check          # проверил
+/docs-do             # выполнил план по шагам
+/docs-sync           # обновил документацию по diff
+/docs-check          # проверил
 git diff                # посмотрел глазами
 ```
 
@@ -43,13 +41,13 @@ git diff                # посмотрел глазами
 ## Все команды
 
 ```bash
-repomind init     # развернуть обвязку в проекте
-repomind task     # ТЗ из inbox → папка задачи
-repomind plan     # deep-dive + estimate + summary     ← модель
-repomind do       # выполнить план по шагам            ← модель
-repomind sync     # обновить документацию по diff      ← модель
-repomind check    # валидация
-repomind index    # пересобрать _index.json
+/docs-init     # развернуть обвязку в проекте
+/docs-task     # ТЗ из inbox → папка задачи
+/docs-plan     # deep-dive + estimate + summary     ← модель
+/docs-do       # выполнить план по шагам            ← модель
+/docs-sync     # обновить документацию по diff      ← модель
+/docs-check    # валидация
+/docs-check    # пересобрать _index.json
 ```
 
 Из агентов:
@@ -82,7 +80,7 @@ Codex         $docs-plan DEMO-657    $docs-do    $docs-sync
 
 ```text
 1. кинуть файл в docs/requirements/inbox/
-2. repomind task
+2. /docs-task
 ```
 
 | Формат | |
@@ -97,9 +95,9 @@ Codex         $docs-plan DEMO-657    $docs-do    $docs-sync
 Другие способы:
 
 ```bash
-repomind task DEMO-657 путь/к/файлу.docx   # файл не в inbox
-repomind task DEMO-657                     # откроется $EDITOR
-pbpaste | repomind task DEMO-657           # из буфера
+/docs-task DEMO-657 путь/к/файлу.docx   # файл не в inbox
+/docs-task DEMO-657                     # откроется $EDITOR
+pbpaste | /docs-task DEMO-657           # из буфера
 ```
 
 ---
@@ -151,13 +149,13 @@ CodeGraph   ГДЕ код и как связан    ← из кода
 RepoMind    ПОЧЕМУ так              ← из головы человека
 ```
 
-Поднимать отдельно не надо — `repomind init` сам запустит `codegraph init`
+Поднимать отдельно не надо — `/docs-init` сам запустит `codegraph init`
 (фоном) и `codegraph install`. Не установлен — покажет команду и пойдёт дальше,
 сам ставить не будет.
 
 ```bash
 npm i -g @colbymchenry/codegraph    # если решил поставить
-repomind init                       # подхватит и настроит
+/docs-init                       # подхватит и настроит
 ```
 
 **`init` — инспектор, а не установщик.** Запускать на настроенном проекте
@@ -171,7 +169,7 @@ repomind init                       # подхватит и настроит
 | `enabled: off` в конфиге | уважает выбор, пропускает |
 | `.codegraph/` закоммичен | предупредит, команду напечатает, сам не выполнит |
 
-Полная пересборка — только явно: `repomind init --codegraph rebuild`.
+Полная пересборка индекса — только если попросишь явно.
 
 | Что даёт | Команда |
 |---|---|
@@ -223,13 +221,13 @@ last_verified_commit: 7c3e910
 
 | Файл | Кто пишет |
 |---|---|
-| `request.md` | `repomind task` |
-| `deep-dive.md` | `repomind plan` — разбор + план |
-| `estimate.md` | `repomind plan` — часы |
-| `summary.md` | `repomind plan` — 3 абзаца для людей |
-| `progress.md` | `repomind do` — отмечает по ходу, а не в конце |
+| `request.md` | `/docs-task` |
+| `deep-dive.md` | `/docs-plan` — разбор + план |
+| `estimate.md` | `/docs-plan` — часы |
+| `summary.md` | `/docs-plan` — 3 абзаца для людей |
+| `progress.md` | `/docs-do` — отмечает по ходу, а не в конце |
 | `reviewed: true` | **ты** — в шапке `deep-dive.md` после прочитки |
-| `result.md` | `repomind sync` |
+| `result.md` | `/docs-sync` |
 
 Структура `deep-dive.md`:
 
@@ -317,13 +315,13 @@ last_verified_commit: 7c3e910
 
 ```text
 правка файла   → PostToolUse   → touch .repomind/dirty    бесплатно
-задача готова  → TaskCompleted → repomind sync            1 вызов
-перед коммитом → git pre-commit → repomind check          бесплатно
+задача готова  → TaskCompleted → /docs-sync            1 вызов
+перед коммитом → git pre-commit → /docs-check          бесплатно
 ```
 
 ---
 
-## `repomind check` проверяет (без модели)
+## `/docs-check` проверяет (без модели)
 
 уникальность document ID · уникальность block ID · существование
 `path#Symbol` · битые markdown-ссылки · ссылки на удалённые файлы ·

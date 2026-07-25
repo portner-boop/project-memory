@@ -3,7 +3,7 @@ id: TASK-DEMO-657-REQUEST
 type: task
 task: DEMO-657
 source: docs/requirements/original/DEMO-657.md
-created_by: repomind task
+created_by: docs-task
 ---
 
 # DEMO-657 — Колонка «Расход за этап»

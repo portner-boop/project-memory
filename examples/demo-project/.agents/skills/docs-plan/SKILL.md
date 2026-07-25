@@ -87,6 +87,4 @@ read it aloud in a meeting, rewrite it.
 
 ## Verification
 
-```bash
-repomind check
-```
+Скажи агенту `/docs-check`.

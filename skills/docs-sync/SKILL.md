@@ -12,8 +12,8 @@ blocks, not whole documents.
 
 ## Input
 
-- `--task <TASK-ID>` — Jira task ID
-- `--base <ref>` — diff base, default `origin/main`
+- task ID — если не назван, берётся из `docs/now/current-task.md`
+- diff base — по умолчанию `origin/main`
 
 ## Steps
 
@@ -104,6 +104,4 @@ typo fixes, internal tests, small refactors, comment edits.
 
 ## Verification
 
-```bash
-repomind check
-```
+Скажи агенту `/docs-check`.

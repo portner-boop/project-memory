@@ -1,0 +1,31 @@
+{
+  "name": "repomind-skills",
+  "version": "0.1.0",
+  "description": "Память проекта для человека и coding-агента: структура docs/, ADR, runbook и шесть скиллов для Claude Code и Codex",
+  "bin": {
+    "repomind-skills": "bin/install.js"
+  },
+  "files": [
+    "bin/",
+    "skills/",
+    "README.md",
+    "CHEATSHEET.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "documentation",
+    "claude-code",
+    "codex",
+    "agent-skills",
+    "adr",
+    "runbook",
+    "project-memory"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/portner-boop/project-memory.git"
+  }
+}

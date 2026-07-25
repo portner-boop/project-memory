@@ -22,7 +22,7 @@ Before implementing a task:
 
 After implementation:
 
-1. Run `repomind sync`.
+1. Run `/docs-sync`.
 2. Update permanent documentation only when behavior, contracts,
    data structures or architectural decisions changed.
 3. Do not rewrite whole documents — update individual blocks.
@@ -77,6 +77,4 @@ Use it for **where the code is**. Use `docs/` for **why it is that way**.
 
 ## Verification
 
-```bash
-repomind check
-```
+Скажи агенту `/docs-check`.

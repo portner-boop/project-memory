@@ -5,7 +5,7 @@ description: Turn a requirement document into a task folder — convert Word/PDF
 
 # docs-task
 
-Заводит задачу из ТЗ. Заменяет `repomind task`, пока CLI нет.
+Заводит задачу из ТЗ: конвертирует Word, создаёт папку, делает задачу текущей.
 
 ---
 

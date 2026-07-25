@@ -97,7 +97,7 @@ docker compose run --rm backend python manage.py makemigrations --check
 docker compose run --rm backend ruff check app/
 docker compose run --rm backend python manage.py test app.<изменённое>
 cd frontend && npm run lint && npm run build
-repomind check
+/docs-check
 ```
 
 ## Сброс окружения

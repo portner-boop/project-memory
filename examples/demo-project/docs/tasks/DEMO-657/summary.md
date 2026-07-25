@@ -2,7 +2,7 @@
 id: TASK-DEMO-657-SUMMARY
 type: task
 task: DEMO-657
-created_by: repomind plan
+created_by: docs-plan
 ---
 
 # DEMO-657 — коротко

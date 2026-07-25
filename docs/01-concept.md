@@ -101,7 +101,7 @@ Claude Code — в `.claude/skills/`. Оба понимают symlink:
 ln -s ../../.agents/skills/docs-sync .claude/skills/docs-sync
 ```
 
-Настоящий файл лежит один раз. `repomind init` делает это за тебя
+Настоящий файл лежит один раз. `/docs-init` делает это за тебя
 (на Windows — копирует).
 
 ### Hook — вот что реально «срабатывает»
@@ -134,15 +134,15 @@ ln -s ../../.agents/skills/docs-sync .claude/skills/docs-sync
 | `SessionEnd` | при закрытии сессии |
 
 ⚠️ **Главная ловушка.** `Stop` срабатывает на **каждый ответ**, а не в конце
-работы. Повесишь туда полный `repomind sync` — модель ответила «ок, сейчас
+работы. Повесишь туда полный `/docs-sync` — модель ответила «ок, сейчас
 посмотрю», и уже улетел LLM-вызов и деньги.
 
 Отсюда правило — **дешёвое часто, дорогое редко**:
 
 ```text
 правка файла   →  PostToolUse    →  touch .repomind/dirty     бесплатно, 100 раз за сессию
-задача готова  →  TaskCompleted  →  repomind sync             1 вызов модели
-перед коммитом →  git pre-commit →  repomind check            бесплатно
+задача готова  →  TaskCompleted  →  /docs-sync             1 вызов модели
+перед коммитом →  git pre-commit →  /docs-check            бесплатно
 ```
 
 Флаг `dirty` — пустой файл-маркер «тут меняли, синк не делали».
