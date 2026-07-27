@@ -68,8 +68,8 @@ description: Set up RepoMind project memory in this repository — inspect the s
 docs/
 ├── README.md
 ├── product/README.md
-├── architecture/README.md
-├── contracts/README.md
+├── architecture/README.md      ← НАВИГАЦИЯ по папке, не содержимое
+├── contracts/README.md         ← то же
 ├── decisions/README.md
 ├── decisions/_template.md
 ├── runbook/setup.md
@@ -83,6 +83,11 @@ docs/
 ```
 
 Существующие файлы **не трогай**.
+
+`README.md` внутри `product/`, `architecture/`, `contracts/` — это **навигация
+по папке**: что здесь лежит и по какому принципу. Не заводи в них `id` и не
+пиши туда содержимое — оно пойдёт в именованные файлы на шаге 7
+(`architecture/system.md`, `contracts/api.md` и т.п.).
 
 ## Шаг 4. `AGENTS.md` и `CLAUDE.md`
 
