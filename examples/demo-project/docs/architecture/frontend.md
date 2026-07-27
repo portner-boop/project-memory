@@ -1,4 +1,4 @@
----
+git branch -D backup-before-strip---
 id: ARCH-FRONTEND
 type: architecture
 code_paths:
